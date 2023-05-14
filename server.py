@@ -67,7 +67,7 @@ def recieve():
                 }}
             )
 
-  return "a"
+  return classes[np.argmax(prediction)]
 
 
 if __name__ == "__main__":
