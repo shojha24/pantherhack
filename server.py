@@ -5,10 +5,9 @@ import base64
 import json
 import pyrebase
 import os
-from PIL import Image#from model import get_pred, m
+from PIL import Image
 from flask_cors import CORS, cross_origin
 import tensorflow as tf
-from tensorflow import keras
 import numpy as np
 
 app = Flask(__name__)
