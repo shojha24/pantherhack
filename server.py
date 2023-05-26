@@ -7,8 +7,11 @@ import pyrebase
 import os
 from PIL import Image
 from flask_cors import CORS, cross_origin
-import tensorflow as tf
 import numpy as np
+import pickle
+from keras.models import load_model
+import cv2
+
 
 app = Flask(__name__)
 app.config['CORS_HEADERS']='Content-Type'
@@ -22,51 +25,59 @@ with open('config.json') as json_file:
 firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
-model = tf.keras.models.load_model("celebrity_classification_TFL.h5")
+model = load_model("test_face_cnn_model.h5")
 
-def get_and_process():
-    img = Image.open('img.jpg')
-    img1 = img
-    """Resize image to appropriate shape for model."""
-    img = img.resize((150,150))
-    """Convert img to numpy array,rescale it,expand dims and check vertically."""
-    x = tf.keras.preprocessing.image.img_to_array(img)
-    x = x / 255.0
-    x = np.expand_dims(x,axis = 0)
-    img_tensor = np.vstack([x])
-    return img1,img_tensor
+image_dims = [224, 224]
+
+with open("face-labels.pickle", 'rb') as f:
+    og_labels = pickle.load(f)
+    labels = {key:value for key,value in og_labels.items()}
+    print(labels)
+
+def get_and_process(image):
+    size = (image_dims[0], image_dims[1])
+    resized_image = cv2.resize(image, size)
+    image_array = np.array(resized_image, "uint8")
+    img = image_array.reshape(1,image_dims[0],image_dims[1],3) 
+    img = img.astype('float32')
+    img /= 255
+    return img
 
 @app.route("/get_img", methods = ['GET', 'POST'])
 def recieve():
   data = request.get_json()
 
-  image = data['image']
+  images = data['images']
   time = data['time']
+  paths = data['paths']
 
-  string_bytes = bytes(str(image), 'utf-8')
+  preds = []
 
-  with open(f"img.jpg", "wb") as fh:
-    fh.write(base64.decodebytes(string_bytes))
-  
-  img, img_tens = get_and_process()
-  prediction = model.predict(img_tens)
+  for i in range(len(paths)):
+    string_bytes = bytes(str(images[i]), 'utf-8')
 
-  classes = ['Angelina Jolie', 'Brad Pitt', 'Denzel Washington', 'Hugh Jackman', 'Jennifer Lawrence', 'Johnny Depp', 'Kate Winslet', 'Leonardo DiCaprio', 'Megan Fox', 'Natalie Portman', 'Nicole Kidman', 'Robert Downey Jr', 'Sandra Bullock', 'Scarlett Johansson', 'Tom Cruise', 'Tom Hanks', 'Will Smith']
-  print(f"Prediction is : {classes[np.argmax(prediction)]}")
+    with open(paths[i], "wb") as fh:
+      fh.write(base64.decodebytes(string_bytes))
+    
+    img = get_and_process(paths[i])
+    predicted_prob = model.predict(img)
+    print(predicted_prob)
 
-  if classes[np.argmax(prediction)] in ["Brad Pitt", 'Denzel Washington', "Jennifer Lawrence", "Johnny Depp", "Tom Cruise"]:
-     whoIsIt = classes[np.argmax(prediction)]
-  else:
-     whoIsIt = "False"
+    if max(predicted_prob[0]) >= 0.7:
+      name = labels[predicted_prob[0].argmax()]
+    else:
+      name = "unknown"
 
-  db.child('data/').update(
-                {time: {
-                    'img': str(image),
-                    'whoIsIt': whoIsIt
+    db.child(f'data/{time}').update(
+                {i: {
+                    'img': str(images[i]),
+                    'whoIsIt': name
                 }}
             )
 
-  return classes[np.argmax(prediction)]
+    preds.append(name)
+
+  return preds
 
 
 if __name__ == "__main__":

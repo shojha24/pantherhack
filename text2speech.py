@@ -9,12 +9,12 @@ tts = TTS(model_name)
 # Text to speech with a numpy output
 wav = tts.tts("This is a test! This is also a test!!", speaker=tts.speakers[0], language=tts.languages[0])
 # Text to speech to a file
-"""tts.tts_to_file(text="This is Brad Pitt", speaker=tts.speakers[0], language=tts.languages[0], file_path="pitt.wav")
-tts.tts_to_file(text="This is Denzel Washington", speaker=tts.speakers[0], language=tts.languages[0], file_path="washington.wav")
-tts.tts_to_file(text="This is Johnny Depp", speaker=tts.speakers[0], language=tts.languages[0], file_path="depp.wav")
-tts.tts_to_file(text="This is Tom Cruise", speaker=tts.speakers[0], language=tts.languages[0], file_path="cruise.wav")
-tts.tts_to_file(text="This is Jennifer Lawrence", speaker=tts.speakers[0], language=tts.languages[0], file_path="lawrence.wav")"""
-tts.tts_to_file(text="Face not recognized. Intruder.", speaker=tts.speakers[0], language=tts.languages[0], file_path="intruder.wav")
+tts.tts_to_file(text="This is Papa", speaker=tts.speakers[0], language=tts.languages[0], file_path="alert_papa.wav")
+tts.tts_to_file(text="This is Mummy", speaker=tts.speakers[0], language=tts.languages[0], file_path="alert_mummy.wav")
+tts.tts_to_file(text="This is Raghav", speaker=tts.speakers[0], language=tts.languages[0], file_path="alert_raghav.wav")
+tts.tts_to_file(text="This is Atharav", speaker=tts.speakers[0], language=tts.languages[0], file_path="alert_atharav.wav")
+tts.tts_to_file(text="This is Zac Levy", speaker=tts.speakers[0], language=tts.languages[0], file_path="alert_zac.wav")
+tts.tts_to_file(text="Face not recognized.", speaker=tts.speakers[0], language=tts.languages[0], file_path="alert_intruder.wav")
 
 
 
