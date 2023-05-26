@@ -8,10 +8,10 @@ import pygame
 from PIL import Image
 import numpy as np
 import pickle
+import json
 
 stream = cv2.VideoCapture(0)
-pygame.init()
-pygame.mixer.music.set_volume(0.5)
+pygame.mixer.init()
 
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
@@ -57,7 +57,7 @@ def camera_feed():
 while True:
     encoded_imgs, img_paths = convert_to_64(camera_feed())
     
-    url = 'http://9169-69-119-107-111.ngrok-free.app/get_img'
+    url = 'http://3bc0-69-119-107-111.ngrok-free.app/get_img'
     
     now = datetime.datetime.now()
     date_time = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -66,10 +66,12 @@ while True:
         response = requests.get(url, json={"images": encoded_imgs, "time": date_time, "paths": img_paths})
         
         print(response.status_code, response.content)
+        
+        images = json.loads(response.content)
 
-        for i in list(range(len(list(response.content)))):
-            pred = list(response.content)[i]
-            (x, y, w, h) = faces[i]
+        for key in images:
+            pred = images[key]
+            (x, y, w, h) = faces[int(key)]
 
             font = cv2.FONT_HERSHEY_SIMPLEX
             color = (255, 0, 255)
@@ -77,22 +79,22 @@ while True:
             cv2.putText(frame, f'({pred})', (x+4,y+24),
             font, 0.5, color, stroke, cv2.LINE_AA)
 
-            if pred == "atharav":
-                pygame.mixer.music.load("audio/alert_atharav.wav")
+            """if pred == "atharav":
+                alert = pygame.mixer.Sound("/home/spoutshield/Documents/audio/alert_atharav.wav")
             elif pred == "mummy":
-                pygame.mixer.music.load("audio/alert_mummy.wav")
+                alert = pygame.mixer.Sound("/home/spoutshield/Documents/audio/alert_mummy.wav")
             elif pred == "papa":
-                pygame.mixer.music.load("audio/alert_papa.wav")
+                alert = pygame.mixer.Sound("/home/spoutshield/Documents/audio/alert_papa.wav")
             elif pred == "raghav":
-                pygame.mixer.music.load("audio/alert_raghav.wav")
+                alert = pygame.mixer.Sound("/home/spoutshield/Documents/audio/alert_raghav.wav")
             elif pred == "zac":
-                pygame.mixer.music.load("audio/alert_zac.wav")
+                alert = pygame.mixer.Sound("/home/spoutshield/Documents/audio/alert_zac.wav")
             else:
-                pygame.mixer.music.load("audio/alert_intruder.wav")
+                alert = pygame.mixer.Sound("/home/spoutshield/Documents/audio/alert_intruder.wav")
 
-            pygame.mixer.music.play()
-            while pygame.mixer.music.get_busy():
-                pass
+            alert.play()
+            while pygame.mixer.get_busy():
+                pass"""
     
     cv2.imshow('frame', frame)
      
