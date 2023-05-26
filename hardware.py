@@ -67,7 +67,7 @@ while True:
         
         print(response.status_code, response.content)
 
-        for i in list(range(list(response.content))):
+        for i in list(range(len(list(response.content)))):
             pred = list(response.content)[i]
             (x, y, w, h) = faces[i]
 
@@ -78,17 +78,17 @@ while True:
             font, 0.5, color, stroke, cv2.LINE_AA)
 
             if pred == "atharav":
-                pygame.mixer.music.load("alert_atharav.wav")
+                pygame.mixer.music.load("audio/alert_atharav.wav")
             elif pred == "mummy":
-                pygame.mixer.music.load("alert_mummy.wav")
+                pygame.mixer.music.load("audio/alert_mummy.wav")
             elif pred == "papa":
-                pygame.mixer.music.load("alert_papa.wav")
+                pygame.mixer.music.load("audio/alert_papa.wav")
             elif pred == "raghav":
-                pygame.mixer.music.load("alert_raghav.wav")
+                pygame.mixer.music.load("audio/alert_raghav.wav")
             elif pred == "zac":
-                pygame.mixer.music.load("alert_zac.wav")
+                pygame.mixer.music.load("audio/alert_zac.wav")
             else:
-                pygame.mixer.music.load("alert_intruder.wav")
+                pygame.mixer.music.load("audio/alert_intruder.wav")
 
             pygame.mixer.music.play()
             while pygame.mixer.music.get_busy():
