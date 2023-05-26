@@ -30,8 +30,8 @@ raghav_path = "images\\raghav"
 zac_path = "images\\zac"
 atharav_path = "images\\atharav"
 target_size = (224, 224)
-#resize_images(mummy_path, target_size)
-#resize_images(raghav_path, target_size)
-#resize_images(papa_path, target_size)
-#resize_images(zac_path, target_size)
-#resize_images(atharav_path, target_size)
+resize_images(mummy_path, target_size)
+resize_images(raghav_path, target_size)
+resize_images(papa_path, target_size)
+resize_images(zac_path, target_size)
+resize_images(atharav_path, target_size)
